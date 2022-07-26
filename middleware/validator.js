@@ -1,7 +1,15 @@
 const Joi = require('joi');
 
 const userQuerySchema = Joi.object({
-    id: Joi.string().required()
+    name: Joi.string().required()
+});
+
+const userParamSchema = Joi.object({
+    id: Joi.number().required()
+});
+
+const productParamSchema = Joi.object({
+    id: Joi.number().required()
 });
 
 const userDefaultBodySchema = Joi.object({
@@ -10,12 +18,21 @@ const userDefaultBodySchema = Joi.object({
     birthDate: Joi.string().required()
 });
 
-const tshirtQuerySchema = Joi.object({
+const productDefaultBodySchema = Joi.object({
+    id: Joi.number().required(),
     size: Joi.string().required(),
+    description: Joi.string().required()
+});
+
+const tshirtQuerySchema = Joi.object({
+    size: Joi.string().required()
 });
 
 module.exports = {
     userQuerySchema,
+    userParamSchema,
     userDefaultBodySchema,
-    tshirtQuerySchema
+    tshirtQuerySchema,
+    productParamSchema,
+    productDefaultBodySchema,
 }
