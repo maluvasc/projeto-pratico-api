@@ -11,7 +11,7 @@ router.get('/users', controller.getAllUsers)
 router.get('/users/:id', validator.params(userParamSchema), controller.getUser)
 router.post('/users', validator.body(userDefaultBodySchema), controller.createUser)
 router.put('/users', validator.body(userDefaultBodySchema), controller.updateUser)
-router.delete('/users', validator.body(userDefaultBodySchema), controller.deleteUser)
+router.delete('/users/:id', validator.params(userParamSchema), controller.deleteUser)
 
 
 module.exports = router;

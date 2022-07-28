@@ -1,77 +1,85 @@
 const { dataUser } = require("../dbContent/users/user");
 
-const firstPage = async (req, res) => {
-  res.status(200).send("User server");
+/*
+ERR TRY CATCH PROBLEMS:
+SOME CATCHES ARE NOT FUNCTIONING YET
+*/
+
+const firstPage = (req, res) => {
+  res.status(200).send("User server"); 
 };
 
-const getAllUsers = async (req, res) => {
-  res.status(200).send(dataUser);
+const getAllUsers = (req, res) => {
+  res.status(200).send(dataUser); 
 };
 
 const getUser = async (req, res) => {
+  try{
   const { id } = req.params;
+  const isUser = checkIfUserExists(id);
+  if (isUser) res.status(404).send("NOT_FOUND");
   const userResponse = dataUser.filter((user) => user.id === Number(id));
   res.status(200).send(userResponse);
+  }
+  catch(err) {
+    res.status(400).send("BAD_REQUEST");
+  }
 };
 
 const getUserByName = async (req, res) => {
-  const { name } = req.query;
-  const checkName = dataUser.filter((user) => user.name === name);
-  res.status(200).send(checkName);
+  try{
+    const { name } = req.query;
+    const checkName = dataUser.filter((user) => user.name === name);
+    res.status(200).send(checkName);
+  } catch(err) {
+    res.status(400).send("BAD_REQUEST");
+  }
 };
 
 const createUser = async (req, res) => {
+  try{
   const newUser = req.body;
   const { id } = req.body;
   const checkId = checkIfUserExists(id);
   if (checkId) {
     dataUser.push(newUser);
-    res.status(201).send("User added!");
-} else {
-  console.log(error);
-  res.status(404).send(error.message`- Operation not succeded`);
+    res.status(201).send("CREATED!");
+  } else{
+    res.status(400).send("BAD_REQUEST");
+  }
+} catch(err) {
+  res.status(400).send("BAD_REQUEST");
 }
 };
 
 const updateUser = async (req, res) => {
-  try {
+  try{
     const { id } = req.body;
+    const updatedUser = req.body;
+    const index = returnIndex(id);
     const isUser = checkIfUserExists(id);
-    if (isUser) throw new Error("Resource not found.");
-    const user = updateUserInfo(req.body);
-    const oldUsers = dataUser.filter((item) => item.id !== id);
-    const newUsers = [...oldUsers, user];
-    res.status(200).json(newUsers);
-  } catch (error) {
-    console.log(error);
-    res.status(404).send(error.message);
+    if (isUser) res.status(404).send("NOT_FOUND");
+    dataUser.splice(index, 1, updatedUser);
+    res.status(200).send("OK!");
+  } catch(err) {
+    res.status(400).send("BAD_REQUEST");
+  }
+};
+
+const deleteUser = (req, res) => {
+  try{
+    const { id } = req.params;
+    const isUser = checkIfUserExists(id);
+    const index = returnIndex(id);
+    if (isUser) res.status(404).send("NOT_FOUND");
+      dataUser.splice(index, 1);
+      res.status(204).send("NO_CONTENT");
+  } catch(err) {
+    res.status(400).send("BAD_REQUEST");
   }
 };
 
 // Private functions
-
-const updateUserInfo = ({ id, name, birthDate }) => {
-  return dataUser.reduce((acc, currentUser) => {
-    const checkedUser = currentUser.id === id;
-    if (checkedUser) {
-      acc = { ...acc, ...{ id, name, birthDate } };
-    }
-    return acc;
-  }, {});
-};
-
-const deleteUser = (req, res) => {
-  const { id } = req.body;
-  const isUser = checkIfUserExists(id);
-  const index = returnIndex(id);
-  if (isUser) {
-    console.log(error);
-    res.status(404).send(error.message`- Operation not succeded`);
-  } else {
-    dataUser.splice(index, 1);
-    res.status(200).send(`User deleted successfully`);
-  }
-};
 
 const returnIndex = (id) => {
   const user = dataUser.findIndex((user) => user.id === Number(id));

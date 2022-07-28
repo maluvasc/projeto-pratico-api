@@ -11,7 +11,7 @@ router.get('/tshirts/:id', validator.params(productParamSchema), controller.getP
 router.get('/tshirt', validator.query(tshirtQuerySchema), controller.getProductBySize)
 router.post('/tshirts', validator.body(productDefaultBodySchema), controller.createProduct)
 router.put('/tshirts', validator.body(productDefaultBodySchema), controller.updateProduct)
-router.delete('/tshirts', validator.body(productDefaultBodySchema), controller.deleteProduct)
+router.delete('/tshirts/:id', validator.params(productParamSchema), controller.deleteProduct)
 
 
 module.exports = router
